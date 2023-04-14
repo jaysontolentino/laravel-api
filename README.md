@@ -26,6 +26,12 @@ Copy .env.example and update the the variables based on your local setup
   cp .env.example .env
 ```
 
+Database Migration and Seeder
+
+```bash
+  php artisan migrate:fresh --seed
+```
+
 Start the server
 
 ```bash
