@@ -16,7 +16,14 @@ class AccountController extends Controller
         ]);
     }
 
-    public function profile() {
-        
+    public function me(Request $request) {
+
+        $user = $request->user();
+        $roles = $request->user()->pluck('slug')->all();
+
+        return response([
+            'user' => $user,
+            'roles' => $roles
+        ]);
     }
 }
