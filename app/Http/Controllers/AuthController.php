@@ -22,7 +22,7 @@ class AuthController extends Controller
             return response([
                 'error' => true,
                 'message' => 'Invalid credentials'
-            ]);
+            ], 403);
         }
 
         $user = Auth::getProvider()->retrieveByCredentials($credentials);

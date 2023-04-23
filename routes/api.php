@@ -22,6 +22,8 @@ Route::post('auth/login', [AuthController::class, 'login']);
 Route::post('auth/register', [AuthController::class, 'register']);
 Route::post('auth/logout', [AuthController::class, 'logout'])->middleware(['auth:sanctum']);
 
+Route::get('auth-user', [AccountController::class, 'me'])->middleware(['auth:sanctum']);
+
 Route::post('revoke-tokens', [AccountController::class, 'revokeTokens'])->middleware(['auth:sanctum']);
 
 Route::apiResource('users', UserController::class)->middleware(['auth:sanctum', 'ability:admin']);

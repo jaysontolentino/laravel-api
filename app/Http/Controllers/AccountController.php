@@ -19,7 +19,7 @@ class AccountController extends Controller
     public function me(Request $request) {
 
         $user = $request->user();
-        $roles = $request->user()->pluck('slug')->all();
+        $roles = $request->user()->roles()->pluck('slug')->all();
 
         return response([
             'user' => $user,
