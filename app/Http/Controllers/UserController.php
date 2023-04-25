@@ -3,9 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Models\Role;
 use App\Http\Filters\UsersFilter;
+use App\Http\Requests\UserStoreRequest;
+use App\Http\Requests\UserUpdateRequest;
 
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rules;
 use Spatie\QueryBuilder\QueryBuilder;
 use Spatie\QueryBuilder\AllowedFilter;
 
@@ -35,24 +39,17 @@ class UserController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(UserStoreRequest $request)
     {
-        $payload = $request->validate([
-            'username' => ['required', 'string', 'max:255', 'unique:'.User::class],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:'.User::class],
-            'phone' => ['required', 'min:11', 'max:12', 'regex:/^([0-9\s\-\+\(\)]*)$/'],
-            'password' => ['required', Rules\Password::defaults()],
-            'role' => ['required', 'in:admin,user'],
-        ]);
-
+        
         $user = User::create([
-            'username'  => $payload['username'],
-            'email'     => $payload['email'],
-            'phone'     => $payload['phone'],
-            'password'  => $payload['password'],
+            'username'  => $request['username'],
+            'email'     => $request['email'],
+            'phone'     => $request['phone'],
+            'password'  => $request['password'],
         ]);
 
-        $user->roles()->attach(Role::where('slug', $payload['role'])->first());
+        $user->roles()->attach(Role::where('slug', $request['role'])->first());
 
         $response = [
             'success' => true,
@@ -67,16 +64,36 @@ class UserController extends Controller
      * Display the specified resource.
      */
     public function show(User $user)
-    {
-        return response($user);
+    {   
+        $roles = $user->roles()->pluck('slug')->all();
+
+        $response = [
+            'user' => $user,
+            'role' => $roles
+        ];
+
+        return response()->json($response);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, User $user)
+    public function update(UserUpdateRequest $request, User $user)
     {
-        // update an user
+        $user->username = $request['username'];
+        $user->email = $request['email'];
+        $user->phone = $request['phone'];
+
+        $currentRoles = $user->roles;
+
+        $user->roles()->detach($currentRoles[0]->id);
+
+        $user->roles()->attach(Role::where('slug', $request['role'])->first());
+
+        $user->save();
+
+        return response()->json($user);
+
     }
 
     /**
