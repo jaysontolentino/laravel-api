@@ -3,6 +3,7 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\AccountController;
+use App\Http\Controllers\RoleController;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -27,3 +28,5 @@ Route::get('auth-user', [AccountController::class, 'me'])->middleware(['auth:san
 Route::post('revoke-tokens', [AccountController::class, 'revokeTokens'])->middleware(['auth:sanctum']);
 
 Route::apiResource('users', UserController::class)->middleware(['auth:sanctum', 'ability:admin']);
+
+Route::get('roles', [RoleController::class, 'index'])->middleware(['auth:sanctum']);

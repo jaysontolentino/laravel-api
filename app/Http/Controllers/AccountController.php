@@ -20,10 +20,12 @@ class AccountController extends Controller
 
         $user = $request->user();
         $roles = $request->user()->roles()->pluck('slug')->all();
+        $token = $request->bearerToken();
 
         return response([
             'user' => $user,
-            'roles' => $roles
+            'roles' => $roles,
+            'token' => $token
         ]);
     }
 }
